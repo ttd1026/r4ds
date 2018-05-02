@@ -1,6 +1,5 @@
 #Chapter 11
 library(tidyverse)
-
 #Exercises
 x <-  "12345.1345"
 parse_number(x, locale = locale(grouping_mark = ",",decimal_mark = "."))
@@ -24,3 +23,28 @@ parse_date(d4, format = "%B %d (%Y)")
 parse_date(d5, format = "%m/%d/%y")
 parse_time(t1, format = "%H%M")
 parse_time(t2)
+
+#Parsing a file
+challenge <- read_csv(readr_example("challenge.csv"))
+problems(challenge)
+
+challenge <- read_csv(
+  readr_example("challenge.csv"),
+  col_types = cols(
+    x = col_double(),
+    y = col_date()
+  )
+) #using double parser
+
+tail(challenge)
+
+challenge2 <- read_csv(readr_example("challenge.csv"), guess_max = 1002)
+tail(challenge2)
+
+challenge2 <- read_csv(readr_example("challenge.csv"),#read .csv file as character vector
+                       col_types = cols(.default = col_character())) 
+
+type_convert(challenge2)
+
+challenge_input <- read_lines("challenge.csv")
+
