@@ -48,3 +48,11 @@ type_convert(challenge2)
 
 challenge_input <- read_lines("challenge.csv")
 
+#Writing to a file
+write_csv(challenge, "challenge.csv")
+write_rds(challenge, "challenge.rds") #write into RDs
+
+install.packages("feather")
+library(feather)
+write_feather(challenge, "challenge.feather")
+read_feather("challenge.feather")
