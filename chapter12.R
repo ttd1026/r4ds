@@ -90,3 +90,18 @@ gather(preg, sex, count, male, female) %>%
 table3 %>% 
   separate(rate, into = c("cases", "population"))
 
+table3 %>% 
+  separate(rate, into = c("cases", "population"), sep = "/", convert = TRUE)
+
+unite(table5, new, "century", "year", sep = "")
+
+#Exercises
+#1
+tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>%
+  separate(x, c("one", "two", "three"))
+
+tibble(x = c("a,b,c", "d,e", "h,i,j")) %>%
+  separate(x, c("one", "two", "three"), fill = "left")
+
+table5 %>% 
+  unite(new, "century", "year", sep = "", remove = TRUE)
