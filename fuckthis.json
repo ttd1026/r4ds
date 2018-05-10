@@ -1,0 +1,27 @@
+ {
+      "day":"2018-04-17",
+      "size":3,
+      "list":[
+         {
+            "box_id":8,
+            "view_total":1861067,
+            "view_scroll":2067,
+            "user_total":495904,
+            "user_scroll":810
+         },
+         {
+            "box_id":9,
+            "view_total":1563264,
+            "view_scroll":2865,
+            "user_total":327460,
+            "user_scroll":741
+         },
+         {
+            "box_id":10,
+            "view_total":1110182,
+            "view_scroll":855,
+            "user_total":228770,
+            "user_scroll":374
+         }
+      ]
+}
