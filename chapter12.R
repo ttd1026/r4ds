@@ -171,3 +171,4 @@ who_tidy %>%
   unite(country_sex, country, sex, remove = FALSE) %>% 
   ggplot(mapping = aes(year, cases, group = country_sex, color = sex)) +
   geom_line()
+
