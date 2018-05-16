@@ -1,6 +1,6 @@
 library(tidyverse)
 library(jsonlite)
-
+library(scales)
 
 json_file <- fromJSON("kenh14data.json")
 
@@ -9,7 +9,7 @@ df <- as.tibble(json_file) %>%
   unnest(list) %>% 
   mutate(date = parse_date(day), 
          box_id = parse_character(box_id)) %>%
-  arrange(as.integer(box_id))
+  arrange(as.integer(box_id)) %>% 
   select(-size, -day)
 
 df <- df[c(6, 1, 2, 3, 4, 5)]
