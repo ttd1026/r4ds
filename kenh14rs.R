@@ -1,11 +1,11 @@
 library(tidyverse)
 library(jsonlite)
 library(scales)
-<<<<<<< HEAD
-=======
+library(gtable)
+library(grid)
+library(gridExtra)
 
->>>>>>> 2a27ba1d48c0d582f43e0604c6d01c05128dae70
-
+# Loading data
 json_file <- fromJSON("kenh14data.json")
 
 # Tidying data
@@ -24,6 +24,9 @@ kenh14_df <- df %>%
             view_scroll = sum(view_scroll), 
             user_total = sum(user_total), 
             user_scroll = sum(user_scroll))
+
+
+# Visualizing data --------------------------------------------------------
 
 #Shared legend adapted from http://rpubs.com/sjackman/grid_arrange_shared_legend
 grid_arrange_shared_legend <- function(...) {
@@ -69,12 +72,6 @@ plot3 <- ggplot(kenh14_df, aes(date, user_scroll, group = box_id, color = box_id
 plot4 <- ggplot(kenh14_df, aes(date, user_total, group = box_id, color = box_id)) +
   ggtitle("user_total by box_id") +
   plot_style() 
-
-#Installing requirements for grid arrangement
-#install.packages(c("grid", "gtable", "gridExtra"))
-library(gtable)
-library(grid)
-library(gridExtra)
 
 #grid.arrange
 grid_arrange_shared_legend(plot1, plot3, plot2, plot4)
