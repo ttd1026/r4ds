@@ -24,44 +24,20 @@ p1 <- ggplot(df, mapping = aes(Budget, Impressions)) +
   plot_style +
   ggtitle("Budget x Impressions")
 
-#Budget x Sessions
-p2 <- ggplot(df, mapping = aes(Budget, Sessions)) +
-  plot_style +
-  ggtitle("Budget x Sessions")
-
-#Budget x Clicks
-p3 <- ggplot(df, mapping = aes(Budget, Clicks)) +
-  plot_style +
-  ggtitle("Budget x Clicks")
-
-#Budget x Conversions
-p4 <- ggplot(df, mapping = aes(Budget, Conversions)) +
-  plot_style +
-  ggtitle("Budget x Conversions")
-
-grid.arrange(p1, p2, p3, p4)
-
-ggplot(df, mapping = aes(Budget, Conversions)) +
+#Adding trend line
+p2 <- ggplot(df, mapping = aes(Budget, Impressions)) +
   geom_point() +
-  geom_smooth(model = lm)
+  geom_smooth(model = lm) +
+  scale_x_continuous(labels = comma) +
+  scale_y_continuous(labels = comma) +
+  theme_minimal()
 
-ggplot(df, mapping = aes(Budget, Impressions)) +
-  geom_point() +
-  geom_smooth(model = lm)
 
-ggplot(df, mapping = aes(Budget, Clicks)) +
-  geom_point() +
-  geom_smooth()
-
-ggplot(df, mapping = aes(Budget, Sessions)) +
-  geom_point() +
-  geom_smooth()
-
-label_list <- c("0-1000000", "1000000-2000000",
-                "2000000-3000000", "3000000-4000000",
-                "4000000-5000000",
-                "5000000-6000000", "6000000-7000000",
-                "7000000-8000000", ">8000000")
+#Binning
+label_list <- c("0-1m", "1-2m",
+                "2-3m", "3-4m",
+                "4-5m", "5-6m", "6-7m",
+                "7-8m", ">8m")
 
 df$bins <- cut(df$Budget,
                breaks = c(seq(0, 9000000, by = 1000000)),
@@ -75,10 +51,13 @@ df_binned <- df %>%
             mean_sessions = mean(Sessions),
             mean_conversions = mean(Conversions))
 
-ggplot(df_binned, mapping = aes(x = bins, y = mean_impressions)) +
+p3 <- ggplot(df_binned, mapping = aes(x = bins, y = mean_impressions)) +
   geom_point(size = 3) +
   geom_path(group = 1, size = 0.8) +
   theme_minimal() +
   xlab("Budget range") +
   ylab("Avg. impressions") +
   scale_y_continuous(labels = comma)
+
+#Displaying
+grid.arrange(p1, p3, p2, nrow = 2)
