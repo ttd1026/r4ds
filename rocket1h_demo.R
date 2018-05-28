@@ -10,7 +10,33 @@ df <- read_csv("rocket1h_rawdata_thang04.csv")
 
 colnames(df)[5] <- "Sessions"
 
-#Plot----------------------------------------------------------
+# Transforming data--------------------------------------------
+# adding ctr and cr
+df <- mutate(df,
+             ctr = Clicks / Impressions,
+             cr = Conversions / Clicks)
+#Binning
+label_list <- c("0-1m", "1-2m",
+                "2-3m", "3-4m",
+                "4-5m", "5-6m", "6-7m",
+                "7-8m", ">8m")
+
+df$bins <- cut(df$Budget,
+               breaks = c(seq(0, 9000000, by = 1000000)),
+               labels = label_list,
+               include.lowest = TRUE)
+
+# Summarize based on bins
+df_binned <- df %>% 
+  group_by(bins) %>% 
+  summarize(mean_impressions = mean(Impressions),
+            mean_clicks = mean(Clicks),
+            mean_sessions = mean(Sessions),
+            mean_conversions = mean(Conversions),
+            mean_ctr = mean(ctr),
+            mean_cr = mean(cr))
+
+#Plotting----------------------------------------------------------
 plot_style <- list(
   geom_point(),
   geom_line(),
@@ -27,52 +53,13 @@ p1 <- ggplot(df, mapping = aes(Budget, Impressions)) +
 #Adding trendline, non-linear model
 ggplot(df, mapping = aes(Budget, Impressions)) +
   geom_point() +
-<<<<<<< HEAD
   geom_smooth() +
   scale_x_continuous(labels = comma) +
   scale_y_continuous(labels = comma) +
   theme_minimal() +
   ggtitle("Budget x Impressions w/ trendline")
-=======
-  geom_smooth(method = "lm") +
-  scale_x_continuous(labels = comma) +
-  scale_y_continuous(labels = comma) +
-  theme_minimal() +
-  ggtitle("Budget x Impressions with trendline")
-
 
 # With trendline, linear model
-
-ln_df <- df %>% 
-  mutate(lnBudget = log(Budget),
-         lnImpressions = log(Impressions)) %>% 
-  filter(lnImpressions != -Inf)
-  
-
-lmodel <- lm(lnImpressions ~ lnBudget,
-                           data = ln_df)
->>>>>>> f0d1d76b38ea144a31d7d4fdd11f7d676f82aa33
-
-summary(lmodel)
-
-#Binning
-label_list <- c("0-1m", "1-2m",
-                "2-3m", "3-4m",
-                "4-5m", "5-6m", "6-7m",
-                "7-8m", ">8m")
-
-df$bins <- cut(df$Budget,
-               breaks = c(seq(0, 9000000, by = 1000000)),
-               labels = label_list,
-               include.lowest = TRUE)
-
-df_binned <- df %>% 
-  group_by(bins) %>% 
-  summarize(mean_impressions = mean(Impressions),
-            mean_clicks = mean(Clicks),
-            mean_sessions = mean(Sessions),
-            mean_conversions = mean(Conversions))
-
 p3 <- ggplot(df_binned, mapping = aes(x = bins, y = mean_impressions)) +
   geom_point(size = 3) +
   geom_path(group = 1, size = 0.8) +
@@ -85,30 +72,23 @@ p3 <- ggplot(df_binned, mapping = aes(x = bins, y = mean_impressions)) +
 #Displaying
 grid.arrange(p1, p3, p2, nrow = 2)
 
-new_df <- df %>% 
-  mutate(ctr = Clicks / Impressions)
-
-ggplot(new_df, mapping = aes(Budget, ctr)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  scale_x_continuous(labels = comma) +
-  scale_y_continuous(labels = comma) +
+#Plotting for budget and CTR-------------------------------------
+plot_budget_ctr <- 
+  ggplot(df, aes(Budget, ctr)) +
   theme_minimal() +
-  ggtitle("Budget x Impressions with trendline")
-
-ggplot(new_df, aes(Budget, ctr)) +
-  geom_point() +
+  scale_y_continuous(labels = percent) +
   scale_x_continuous(labels = comma)
 
-df_binned <- new_df %>% 
-  group_by(bins) %>% 
-  summarize(mean_ctr = mean(ctr))
+plot_budget_ctr + 
+  geom_point(na.rm = TRUE) +
+  geom_smooth(method = "loess", 
+              na.rm = TRUE,
+              span = 3)
 
-ggplot(df_binned, mapping = aes(x = bins, y = mean_ctr)) +
-  geom_point(size = 3) +
-  geom_path(group = 1, size = 0.8) +
-  theme_minimal() +
-  xlab("Budget range") +
-  ylab("Avg. ctr") +
-  scale_y_continuous(labels = comma) +
-  ggtitle("Budget range x ctr")
+plot_budget_ctr_binned <-  ggplot(df_binned, aes(bins, mean_ctr))
+  
+plot_budget_ctr_binned + 
+  geom_point(na.rm = TRUE) +
+  geom_line(group = 1, na.rm = TRUE)
+
+ggplot(df, aes())
