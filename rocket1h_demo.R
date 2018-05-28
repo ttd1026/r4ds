@@ -27,10 +27,11 @@ p1 <- ggplot(df, mapping = aes(Budget, Impressions)) +
 #Adding trend line
 p2 <- ggplot(df, mapping = aes(Budget, Impressions)) +
   geom_point() +
-  geom_smooth(model = lm) +
+  geom_smooth() +
   scale_x_continuous(labels = comma) +
   scale_y_continuous(labels = comma) +
-  theme_minimal()
+  theme_minimal() +
+  ggtitle("Budget x Impressions w/ trendline")
 
 
 #Binning
