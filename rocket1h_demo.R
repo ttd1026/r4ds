@@ -24,15 +24,36 @@ p1 <- ggplot(df, mapping = aes(Budget, Impressions)) +
   plot_style +
   ggtitle("Budget x Impressions")
 
-#Adding trend line
-p2 <- ggplot(df, mapping = aes(Budget, Impressions)) +
+#Adding trendline, non-linear model
+ggplot(df, mapping = aes(Budget, Impressions)) +
   geom_point() +
+<<<<<<< HEAD
   geom_smooth() +
   scale_x_continuous(labels = comma) +
   scale_y_continuous(labels = comma) +
   theme_minimal() +
   ggtitle("Budget x Impressions w/ trendline")
+=======
+  geom_smooth(method = "lm") +
+  scale_x_continuous(labels = comma) +
+  scale_y_continuous(labels = comma) +
+  theme_minimal() +
+  ggtitle("Budget x Impressions with trendline")
 
+
+# With trendline, linear model
+
+ln_df <- df %>% 
+  mutate(lnBudget = log(Budget),
+         lnImpressions = log(Impressions)) %>% 
+  filter(lnImpressions != -Inf)
+  
+
+lmodel <- lm(lnImpressions ~ lnBudget,
+                           data = ln_df)
+>>>>>>> f0d1d76b38ea144a31d7d4fdd11f7d676f82aa33
+
+summary(lmodel)
 
 #Binning
 label_list <- c("0-1m", "1-2m",
@@ -58,7 +79,36 @@ p3 <- ggplot(df_binned, mapping = aes(x = bins, y = mean_impressions)) +
   theme_minimal() +
   xlab("Budget range") +
   ylab("Avg. impressions") +
-  scale_y_continuous(labels = comma)
+  scale_y_continuous(labels = comma) +
+  ggtitle("Budget range x Impressions")
 
 #Displaying
 grid.arrange(p1, p3, p2, nrow = 2)
+
+new_df <- df %>% 
+  mutate(ctr = Clicks / Impressions)
+
+ggplot(new_df, mapping = aes(Budget, ctr)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  scale_x_continuous(labels = comma) +
+  scale_y_continuous(labels = comma) +
+  theme_minimal() +
+  ggtitle("Budget x Impressions with trendline")
+
+ggplot(new_df, aes(Budget, ctr)) +
+  geom_point() +
+  scale_x_continuous(labels = comma)
+
+df_binned <- new_df %>% 
+  group_by(bins) %>% 
+  summarize(mean_ctr = mean(ctr))
+
+ggplot(df_binned, mapping = aes(x = bins, y = mean_ctr)) +
+  geom_point(size = 3) +
+  geom_path(group = 1, size = 0.8) +
+  theme_minimal() +
+  xlab("Budget range") +
+  ylab("Avg. ctr") +
+  scale_y_continuous(labels = comma) +
+  ggtitle("Budget range x ctr")
